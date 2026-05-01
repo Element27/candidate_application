@@ -65,6 +65,7 @@ export default function ApplyPage() {
   const workHistoryWatch = watch('workHistory');
 
   const skills = watch('skills');
+  const allValues = watch();
 
   const { fields: workFields, append: appendWork, remove: removeWork } = useFieldArray({
     control,
@@ -119,52 +120,47 @@ export default function ApplyPage() {
               <label className="block text-sm font-medium">Full Name</label>
               <input
                 {...register('fullName')}
-                placeholder="e.g., John Doe"
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
+                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                 type="text"
               />
-              {errors.fullName && <p className="text-red-500 text-xs font-semibold italic">{errors.fullName.message}</p>}
+              {errors.fullName && <p className="text-red-500 text-sm">{errors.fullName.message}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium">Email</label>
               <input
-                placeholder="e.g., john.doe@example.com"
                 {...register('email')}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
+                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                 type="email"
               />
-              {errors.email && <p className="text-red-500 text-xs font-semibold italic">{errors.email.message}</p>}
+              {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium">Phone Number</label>
               <input
-                placeholder="e.g., 08012345678"
                 {...register('phoneNumber')}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
+                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                 type="tel"
               />
-              {errors.phoneNumber && <p className="text-red-500 text-xs font-semibold italic">{errors.phoneNumber.message}</p>}
+              {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber.message}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium">City</label>
                 <input
-                  placeholder="e.g., Lagos"
                   {...register('location.city')}
-                  className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
+                  className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                   type="text"
                 />
-                {errors.location?.city && <p className="text-red-500 text-xs font-semibold italic">{errors.location.city.message}</p>}
+                {errors.location?.city && <p className="text-red-500 text-sm">{errors.location.city.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium">Country</label>
                 <input
-                  placeholder="e.g., Nigeria"
                   {...register('location.country')}
-                  className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
+                  className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                   type="text"
                 />
-                {errors.location?.country && <p className="text-red-500 text-xs font-semibold italic">{errors.location.country.message}</p>}
+                {errors.location?.country && <p className="text-red-500 text-sm">{errors.location.country.message}</p>}
               </div>
             </div>
           </div>
@@ -177,42 +173,39 @@ export default function ApplyPage() {
               <label className="block text-sm font-medium">Resume URL</label>
               <input
                 {...register('resumeUrl')}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
+                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                 type="url"
                 placeholder="https://example.com/resume.pdf"
               />
-              {errors.resumeUrl && <p className="text-red-500 text-xs font-semibold italic">{errors.resumeUrl.message}</p>}
+              {errors.resumeUrl && <p className="text-red-500 text-sm">{errors.resumeUrl.message}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium">Portfolio URL (optional)</label>
               <input
                 {...register('portfolioUrl')}
-                placeholder="https://example.com/portfolio"
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
+                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                 type="url"
               />
-              {errors.portfolioUrl && <p className="text-red-500 text-xs font-semibold italic">{errors.portfolioUrl.message}</p>}
+              {errors.portfolioUrl && <p className="text-red-500 text-sm">{errors.portfolioUrl.message}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium">LinkedIn URL (optional)</label>
               <input
                 {...register('linkedInUrl')}
-                placeholder="https://example.com/linkedIn"
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
+                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                 type="url"
               />
-              {errors.linkedInUrl && <p className="text-red-500 text-xs font-semibold italic">{errors.linkedInUrl.message}</p>}
+              {errors.linkedInUrl && <p className="text-red-500 text-sm">{errors.linkedInUrl.message}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium">Professional Summary (optional)</label>
               <textarea
                 {...register('professionalSummary')}
-                placeholder="Briefly describe your professional background and key achievements..."
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
+                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                 rows={4}
                 maxLength={1000}
               />
-              {errors.professionalSummary && <p className="text-red-500 text-xs font-semibold italic">{errors.professionalSummary.message}</p>}
+              {errors.professionalSummary && <p className="text-red-500 text-sm">{errors.professionalSummary.message}</p>}
             </div>
           </div>
         );
@@ -246,7 +239,7 @@ export default function ApplyPage() {
               >
                 Add Skill
               </button>
-              {errors.skills && <p className="text-red-500 text-xs font-semibold italic">{errors.skills.message}</p>}
+              {errors.skills && <p className="text-red-500 text-sm">{errors.skills.message}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium">Work History</label>
@@ -257,7 +250,7 @@ export default function ApplyPage() {
                       <label className="block text-sm font-medium">Job Title</label>
                       <input
                         {...register(`workHistory.${index}.jobTitle`)}
-                        className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
+                        className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                         type="text"
                       />
                     </div>
@@ -265,7 +258,7 @@ export default function ApplyPage() {
                       <label className="block text-sm font-medium">Company</label>
                       <input
                         {...register(`workHistory.${index}.company`)}
-                        className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
+                        className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                         type="text"
                       />
                     </div>
@@ -275,7 +268,7 @@ export default function ApplyPage() {
                       <label className="block text-sm font-medium">Start Date</label>
                       <input
                         {...register(`workHistory.${index}.startDate`)}
-                        className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
+                        className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                         type="date"
                       />
                     </div>
@@ -283,7 +276,7 @@ export default function ApplyPage() {
                       <label className="block text-sm font-medium">End Date</label>
                       <input
                         {...register(`workHistory.${index}.endDate`)}
-                        className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
+                        className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                         type="date"
                         disabled={workHistoryWatch?.[index]?.isCurrent}
                       />
@@ -303,7 +296,7 @@ export default function ApplyPage() {
                     <label className="block text-sm font-medium">Description (optional)</label>
                     <textarea
                       {...register(`workHistory.${index}.description`)}
-                      className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
+                      className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                       rows={3}
                       maxLength={2000}
                     />
@@ -311,7 +304,7 @@ export default function ApplyPage() {
                   <button
                     type="button"
                     onClick={() => removeWork(index)}
-                    className="mt-2 text-red-500 text-xs font-semibold italic"
+                    className="mt-2 text-red-500 text-sm"
                   >
                     Remove
                   </button>
@@ -345,7 +338,7 @@ export default function ApplyPage() {
                     <label className="block text-sm font-medium">Institution</label>
                     <input
                       {...register(`education.${index}.institution`)}
-                      className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
+                      className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                       type="text"
                     />
                   </div>
@@ -353,7 +346,7 @@ export default function ApplyPage() {
                     <label className="block text-sm font-medium">Degree/Field of Study</label>
                     <input
                       {...register(`education.${index}.degree`)}
-                      className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
+                      className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                       type="text"
                     />
                   </div>
@@ -362,7 +355,7 @@ export default function ApplyPage() {
                   <label className="block text-sm font-medium">Graduation Year</label>
                   <input
                     {...register(`education.${index}.graduationYear`, { valueAsNumber: true })}
-                    className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
+                    className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                     type="number"
                     min={1900}
                     max={new Date().getFullYear() + 10}
@@ -371,7 +364,7 @@ export default function ApplyPage() {
                 <button
                   type="button"
                   onClick={() => removeEducation(index)}
-                  className="mt-2 text-red-500 text-xs font-semibold italic"
+                  className="mt-2 text-red-500 text-sm"
                 >
                   Remove
                 </button>
@@ -392,8 +385,65 @@ export default function ApplyPage() {
         );
       case 4:
         return (
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Compliance</h2>
+          <div className="space-y-6">
+            <h2 className="text-xl font-semibold">Review & Compliance</h2>
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+              <h3 className="text-lg font-semibold mb-3">Please review your application</h3>
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-semibold">Personal Information</h4>
+                  <p>Name: {allValues.fullName || '—'}</p>
+                  <p>Email: {allValues.email || '—'}</p>
+                  <p>Phone: {allValues.phoneNumber || '—'}</p>
+                  <p>Location: {allValues.location?.city || '—'}, {allValues.location?.country || '—'}</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold">Professional Profile</h4>
+                  <p>Resume: {allValues.resumeUrl || '—'}</p>
+                  <p>Portfolio: {allValues.portfolioUrl || '—'}</p>
+                  <p>LinkedIn: {allValues.linkedInUrl || '—'}</p>
+                  <p>Summary: {allValues.professionalSummary || '—'}</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold">Skills</h4>
+                  <p>{allValues.skills?.filter(Boolean).join(', ') || '—'}</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold">Work History</h4>
+                  {allValues.workHistory?.length ? (
+                    <div className="space-y-3">
+                      {allValues.workHistory.map((item, index) => (
+                        <div key={index} className="rounded border border-gray-200 bg-white p-3">
+                          <p className="font-medium">{item.jobTitle || 'Untitled role'} at {item.company || 'Unknown company'}</p>
+                          <p>
+                            {item.startDate || 'Start date missing'} — {item.isCurrent ? 'Present' : item.endDate || 'End date missing'}
+                          </p>
+                          <p>{item.description || 'No description provided'}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p>—</p>
+                  )}
+                </div>
+                <div>
+                  <h4 className="font-semibold">Education</h4>
+                  {allValues.education?.length ? (
+                    <div className="space-y-3">
+                      {allValues.education.map((item, index) => (
+                        <div key={index} className="rounded border border-gray-200 bg-white p-3">
+                          <p className="font-medium">{item.degree || 'No degree entered'}</p>
+                          <p>{item.institution || 'No institution entered'}</p>
+                          <p>Graduation Year: {item.graduationYear || '—'}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p>—</p>
+                  )}
+                </div>
+              </div>
+            </div>
             <div>
               <label className="inline-flex items-center">
                 <input
@@ -403,7 +453,7 @@ export default function ApplyPage() {
                 />
                 I agree to the privacy policy
               </label>
-              {errors.agreedToPrivacyPolicy && <p className="text-red-500 text-xs font-semibold italic">{errors.agreedToPrivacyPolicy.message}</p>}
+              {errors.agreedToPrivacyPolicy && <p className="text-red-500 text-sm">{errors.agreedToPrivacyPolicy.message}</p>}
             </div>
           </div>
         );
@@ -412,36 +462,23 @@ export default function ApplyPage() {
     }
   };
 
-  // <div className="bg-gray-200 p-1 rounded-md mt-40 gap-2 flex justify-between items-center w-full duration-300 ">
-  //         {steps.map((step, index) => (
-  //           <div
-  //             key={step}
-  //             className={`flex-1 text-center py-2  ${
-  //               index <= currentStep ? 'bg-blue-500 duration-300 rounded-md text-white' : ' text-gray-500'
-  //             }`}
-  //           >
-  //             {step}
-  //           </div>
-  //         ))}
-  //       </div>
-
   return (
-    <div className=" mx-auto p-6 w-full ">
-      <div className="mb-6 w-2/3 mx-auto p-1 border border-blue-500 rounded-md">
+    <div className="max-w-2xl mx-auto p-6">
+      <div className="mb-6">
         <div className="flex justify-between items-center">
           {steps.map((step, index) => (
             <div
               key={step}
-              className={`flex-1 text-center text-sm py-2  ${
-              index <= currentStep ? 'bg-blue-500 duration-300 rounded-md text-white' : ' text-gray-500'
-               }`}
+              className={`flex-1 text-center py-2 ${
+                index <= currentStep ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-500'
+              }`}
             >
               {step}
             </div>
           ))}
         </div>
       </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full lg:w-2/3 mx-auto bg-white p-6 rounded-md shadow-md">
+      <form onSubmit={handleSubmit(onSubmit)}>
         {renderStep()}
         <div className="flex justify-between mt-6">
           {currentStep > 0 && (
