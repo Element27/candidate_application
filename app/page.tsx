@@ -1,17 +1,25 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useForm, useFieldArray, type Resolver } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { candidateApplicationSchema, type CandidateApplication } from '@/lib/schemas';
-import { toast } from 'react-toastify';
+import { useState } from "react";
+import { useForm, useFieldArray, type Resolver } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  candidateApplicationSchema,
+  type CandidateApplication,
+} from "@/lib/schemas";
+import { toast } from "react-toastify";
+import PersonalInfo from "@/components/PersonalInfo";
+import ProfessionalInfo from "@/components/ProfessionalInfo";
+import WorkExperience from "@/components/WorkExperience";
+import Review from "@/components/Review";
+import Education from "@/components/Education";
 
 const steps = [
-  'Personal Information',
-  'Professional Profile',
-  'Technical & Experience',
-  'Education',
-  'Compliance',
+  "Personal Information",
+  "Professional Profile",
+  "Technical & Experience",
+  "Education",
+  "Compliance",
 ];
 
 export default function ApplyPage() {
@@ -24,37 +32,40 @@ export default function ApplyPage() {
     watch,
     setValue,
     formState: { errors },
+    reset,
     trigger,
   } = useForm<CandidateApplication>({
-    resolver: zodResolver(candidateApplicationSchema) as Resolver<CandidateApplication>,
-    mode: 'onChange',
+    resolver: zodResolver(
+      candidateApplicationSchema,
+    ) as Resolver<CandidateApplication>,
+    mode: "onChange",
     defaultValues: {
-      fullName: '',
-      email: '',
-      phoneNumber: '',
+      fullName: "",
+      email: "",
+      phoneNumber: "",
       location: {
-        city: '',
-        country: '',
+        city: "",
+        country: "",
       },
-      resumeUrl: '',
-      portfolioUrl: '',
-      linkedInUrl: '',
-      professionalSummary: '',
-      skills: [''],
+      resumeUrl: "",
+      portfolioUrl: "",
+      linkedInUrl: "",
+      professionalSummary: "",
+      skills: [""],
       workHistory: [
         {
-          jobTitle: '',
-          company: '',
-          startDate: '',
-          endDate: '',
+          jobTitle: "",
+          company: "",
+          startDate: "",
+          endDate: "",
           isCurrent: false,
-          description: '',
+          description: "",
         },
       ],
       education: [
         {
-          institution: '',
-          degree: '',
+          institution: "",
+          degree: "",
           graduationYear: new Date().getFullYear(),
         },
       ],
@@ -62,47 +73,61 @@ export default function ApplyPage() {
     },
   });
 
-  const workHistoryWatch = watch('workHistory');
+  const allValues = watch();
 
-  const skills = watch('skills');
-
-  const { fields: workFields, append: appendWork, remove: removeWork } = useFieldArray({
+  const {
+    fields: educationFields,
+    append: appendEducation,
+    remove: removeEducation,
+  } = useFieldArray({
     control,
-    name: 'workHistory',
+    name: "education",
   });
-
-  const { fields: educationFields, append: appendEducation, remove: removeEducation } = useFieldArray({
-    control,
-    name: 'education',
-  });
-
-  const appendSkill = () => {
-    setValue('skills', [...skills, ''], { shouldValidate: true, shouldDirty: true });
-  };
-
-  const removeSkill = (index: number) => {
-    const nextSkills = skills.filter((_, i) => i !== index);
-    setValue('skills', nextSkills, { shouldValidate: true, shouldDirty: true });
-  };
 
   const onSubmit = (data: CandidateApplication) => {
-    console.log('Form submitted:', data);
-    toast.success('Application submitted successfully!');
+    console.log("Form submitted:", data);
+    toast.success("Application submitted successfully!");
+    setCurrentStep(0);
+    reset();
   };
 
   const nextStep = async () => {
     const stepFieldGroups = [
-      ['fullName', 'email', 'phoneNumber', 'location.city', 'location.country'],
-      ['resumeUrl', 'portfolioUrl', 'linkedInUrl', 'professionalSummary'],
-      ['skills', 'workHistory'],
-      ['education'],
-      ['agreedToPrivacyPolicy'],
+      ["fullName", "email", "phoneNumber", "location.city", "location.country"],
+      ["resumeUrl", "portfolioUrl", "linkedInUrl", "professionalSummary"],
+      ["skills", "workHistory"],
+      ["education"],
+      ["agreedToPrivacyPolicy"],
     ] as const;
 
     const isStepValid = await trigger(stepFieldGroups[currentStep]);
-    if (isStepValid) {
-      setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+    if (!isStepValid) return;
+
+    // Validate work experience has at least 1 filled entry
+    if (currentStep === 2) {
+      const workHistory = allValues.workHistory || [];
+      const hasFilledWorkExperience = workHistory.some(
+        (work) => work.jobTitle?.trim() && work.company?.trim()
+      );
+      if (!hasFilledWorkExperience) {
+        toast.error("Please add at least 1 work experience entry");
+        return;
+      }
     }
+
+    // Validate education has at least 1 filled entry
+    if (currentStep === 3) {
+      const education = allValues.education || [];
+      const hasFilledEducation = education.some(
+        (edu) => edu.institution?.trim() && edu.degree?.trim()
+      );
+      if (!hasFilledEducation) {
+        toast.error("Please add at least 1 education entry");
+        return;
+      }
+    }
+
+    setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
   };
 
   const prevStep = () => {
@@ -112,318 +137,37 @@ export default function ApplyPage() {
   const renderStep = () => {
     switch (currentStep) {
       case 0:
-        return (
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Personal Information</h2>
-            <div>
-              <label className="block text-sm font-medium">Full Name</label>
-              <input
-                {...register('fullName')}
-                placeholder="e.g., John Doe"
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
-                type="text"
-              />
-              {errors.fullName && <p className="text-red-500 text-xs font-semibold italic">{errors.fullName.message}</p>}
-            </div>
-            <div>
-              <label className="block text-sm font-medium">Email</label>
-              <input
-                placeholder="e.g., john.doe@example.com"
-                {...register('email')}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
-                type="email"
-              />
-              {errors.email && <p className="text-red-500 text-xs font-semibold italic">{errors.email.message}</p>}
-            </div>
-            <div>
-              <label className="block text-sm font-medium">Phone Number</label>
-              <input
-                placeholder="e.g., 08012345678"
-                {...register('phoneNumber')}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
-                type="tel"
-              />
-              {errors.phoneNumber && <p className="text-red-500 text-xs font-semibold italic">{errors.phoneNumber.message}</p>}
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium">City</label>
-                <input
-                  placeholder="e.g., Lagos"
-                  {...register('location.city')}
-                  className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
-                  type="text"
-                />
-                {errors.location?.city && <p className="text-red-500 text-xs font-semibold italic">{errors.location.city.message}</p>}
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Country</label>
-                <input
-                  placeholder="e.g., Nigeria"
-                  {...register('location.country')}
-                  className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
-                  type="text"
-                />
-                {errors.location?.country && <p className="text-red-500 text-xs font-semibold italic">{errors.location.country.message}</p>}
-              </div>
-            </div>
-          </div>
-        );
+        return <PersonalInfo register={register} errors={errors} />;
       case 1:
-        return (
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Professional Profile</h2>
-            <div>
-              <label className="block text-sm font-medium">Resume URL</label>
-              <input
-                {...register('resumeUrl')}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
-                type="url"
-                placeholder="https://example.com/resume.pdf"
-              />
-              {errors.resumeUrl && <p className="text-red-500 text-xs font-semibold italic">{errors.resumeUrl.message}</p>}
-            </div>
-            <div>
-              <label className="block text-sm font-medium">Portfolio URL (optional)</label>
-              <input
-                {...register('portfolioUrl')}
-                placeholder="https://example.com/portfolio"
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
-                type="url"
-              />
-              {errors.portfolioUrl && <p className="text-red-500 text-xs font-semibold italic">{errors.portfolioUrl.message}</p>}
-            </div>
-            <div>
-              <label className="block text-sm font-medium">LinkedIn URL (optional)</label>
-              <input
-                {...register('linkedInUrl')}
-                placeholder="https://example.com/linkedIn"
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
-                type="url"
-              />
-              {errors.linkedInUrl && <p className="text-red-500 text-xs font-semibold italic">{errors.linkedInUrl.message}</p>}
-            </div>
-            <div>
-              <label className="block text-sm font-medium">Professional Summary (optional)</label>
-              <textarea
-                {...register('professionalSummary')}
-                placeholder="Briefly describe your professional background and key achievements..."
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
-                rows={4}
-                maxLength={1000}
-              />
-              {errors.professionalSummary && <p className="text-red-500 text-xs font-semibold italic">{errors.professionalSummary.message}</p>}
-            </div>
-          </div>
-        );
+        return <ProfessionalInfo register={register} errors={errors} />;
       case 2:
         return (
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Technical & Experience</h2>
-            <div>
-              <label className="block text-sm font-medium">Skills</label>
-              {skills?.map((skill, index) => (
-                <div key={`skill-${index}`} className="flex items-center mb-2">
-                  <input
-                    {...register(`skills.${index}`)}
-                    className="flex-1 border border-gray-300 rounded-md p-2"
-                    type="text"
-                    placeholder="e.g., JavaScript"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeSkill(index)}
-                    className="ml-2 text-red-500"
-                  >
-                    Remove
-                  </button>
-                </div>
-              ))}
-              <button
-                type="button"
-                onClick={appendSkill}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md"
-              >
-                Add Skill
-              </button>
-              {errors.skills && <p className="text-red-500 text-xs font-semibold italic">{errors.skills.message}</p>}
-            </div>
-            <div>
-              <label className="block text-sm font-medium">Work History</label>
-              {workFields.map((field, index) => (
-                <div key={field.id} className="border border-gray-200 rounded-md p-4 mb-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium">Job Title</label>
-                      <input
-                        {...register(`workHistory.${index}.jobTitle`)}
-                        className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
-                        type="text"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium">Company</label>
-                      <input
-                        {...register(`workHistory.${index}.company`)}
-                        className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
-                        type="text"
-                      />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 mt-4">
-                    <div>
-                      <label className="block text-sm font-medium">Start Date</label>
-                      <input
-                        {...register(`workHistory.${index}.startDate`)}
-                        className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
-                        type="date"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium">End Date</label>
-                      <input
-                        {...register(`workHistory.${index}.endDate`)}
-                        className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
-                        type="date"
-                        disabled={workHistoryWatch?.[index]?.isCurrent}
-                      />
-                    </div>
-                  </div>
-                  <div className="mt-4">
-                    <label className="inline-flex items-center">
-                      <input
-                        {...register(`workHistory.${index}.isCurrent`)}
-                        type="checkbox"
-                        className="mr-2"
-                      />
-                      Currently working here
-                    </label>
-                  </div>
-                  <div className="mt-4">
-                    <label className="block text-sm font-medium">Description (optional)</label>
-                    <textarea
-                      {...register(`workHistory.${index}.description`)}
-                      className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
-                      rows={3}
-                      maxLength={2000}
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => removeWork(index)}
-                    className="mt-2 text-red-500 text-xs font-semibold italic"
-                  >
-                    Remove
-                  </button>
-                </div>
-              ))}
-              <button
-                type="button"
-                onClick={() => appendWork({
-                  jobTitle: '',
-                  company: '',
-                  startDate: '',
-                  endDate: '',
-                  isCurrent: false,
-                  description: '',
-                })}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md"
-              >
-                Add Work Experience
-              </button>
-            </div>
-          </div>
+          <WorkExperience
+            control={control}
+            register={register}
+            errors={errors}
+            watch={watch}
+            setValue={setValue}
+          />
         );
       case 3:
         return (
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Education</h2>
-            {educationFields.map((field, index) => (
-              <div key={field.id} className="border border-gray-200 rounded-md p-4 mb-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium">Institution</label>
-                    <input
-                      {...register(`education.${index}.institution`)}
-                      className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
-                      type="text"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium">Degree/Field of Study</label>
-                    <input
-                      {...register(`education.${index}.degree`)}
-                      className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
-                      type="text"
-                    />
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <label className="block text-sm font-medium">Graduation Year</label>
-                  <input
-                    {...register(`education.${index}.graduationYear`, { valueAsNumber: true })}
-                    className="mt-1 block w-full border border-gray-300 rounded-md p-2 placeholder:text-xs"
-                    type="number"
-                    min={1900}
-                    max={new Date().getFullYear() + 10}
-                  />
-                </div>
-                <button
-                  type="button"
-                  onClick={() => removeEducation(index)}
-                  className="mt-2 text-red-500 text-xs font-semibold italic"
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={() => appendEducation({
-                institution: '',
-                degree: '',
-                graduationYear: new Date().getFullYear(),
-              })}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
-            >
-              Add Education
-            </button>
-          </div>
+          <Education
+            educationFields={educationFields}
+            register={register}
+            errors={errors}
+            removeEducation={removeEducation}
+            appendEducation={appendEducation}
+          />
         );
       case 4:
         return (
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Compliance</h2>
-            <div>
-              <label className="inline-flex items-center">
-                <input
-                  {...register('agreedToPrivacyPolicy')}
-                  type="checkbox"
-                  className="mr-2"
-                />
-                I agree to the privacy policy
-              </label>
-              {errors.agreedToPrivacyPolicy && <p className="text-red-500 text-xs font-semibold italic">{errors.agreedToPrivacyPolicy.message}</p>}
-            </div>
-          </div>
+          <Review allValues={allValues} register={register} errors={errors} />
         );
       default:
         return null;
     }
   };
-
-  // <div className="bg-gray-200 p-1 rounded-md mt-40 gap-2 flex justify-between items-center w-full duration-300 ">
-  //         {steps.map((step, index) => (
-  //           <div
-  //             key={step}
-  //             className={`flex-1 text-center py-2  ${
-  //               index <= currentStep ? 'bg-blue-500 duration-300 rounded-md text-white' : ' text-gray-500'
-  //             }`}
-  //           >
-  //             {step}
-  //           </div>
-  //         ))}
-  //       </div>
 
   return (
     <div className=" mx-auto p-6 w-full ">
@@ -433,15 +177,20 @@ export default function ApplyPage() {
             <div
               key={step}
               className={`flex-1 text-center text-sm py-2  ${
-              index <= currentStep ? 'bg-blue-500 duration-300 rounded-md text-white' : ' text-gray-500'
-               }`}
+                index <= currentStep
+                  ? "bg-blue-500 duration-300 rounded-md text-white"
+                  : " text-gray-500"
+              }`}
             >
               {step}
             </div>
           ))}
         </div>
       </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="w-full lg:w-2/3 mx-auto bg-white p-6 rounded-md shadow-md">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="w-full lg:w-2/3 mx-auto bg-white p-6 rounded-md shadow-md"
+      >
         {renderStep()}
         <div className="flex justify-between mt-6">
           {currentStep > 0 && (
